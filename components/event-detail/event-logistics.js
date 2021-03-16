@@ -1,6 +1,7 @@
 import AddressIcon from "../icons/address-icon";
 import DateIcon from "../icons/date-icon";
 import LogisticsItem from "./logistics-item";
+import Image from "next/image";
 import classes from "./event-logistics.module.css";
 
 function EventLogistics(props) {
