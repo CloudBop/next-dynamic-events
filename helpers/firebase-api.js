@@ -32,15 +32,16 @@ export async function getEventById(id) {
 //   return DUMMY_EVENTS;
 // }
 
-// export function getFilteredEvents(dateFilter) {
-//   const { year, month } = dateFilter;
+export async function getFilteredEvents(dateFilter) {
+  const allEventsData = await getAllEvents();
+  const { year, month } = dateFilter;
 
-//   let filteredEvents = DUMMY_EVENTS.filter(event => {
-//     const eventDate = new Date(event.date);
-//     return (
-//       eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
-//     );
-//   });
+  let filteredEvents = allEventsData.filter(event => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
+    );
+  });
 
-//   return filteredEvents;
-// }
+  return filteredEvents;
+}
