@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { getAllEvents } from "../../helpers/firebase-api";
 import EventList from "../../components/events/event-list";
 import EventsSearch from "../../components/events/events-search";
-import { getStaticProps } from "..";
 
 function AllEventsPage(props) {
   const { events } = props;
