@@ -1,7 +1,7 @@
 import { getFeaturedEvents } from "../helpers/firebase-api";
 import EventList from "../components/events/event-list";
+import NewsLetterRegistration from "../components/input/newsletter-registration";
 import Head from "next/head";
-
 function HomePage(props) {
   const { featuredEvents } = props;
 
@@ -14,6 +14,7 @@ function HomePage(props) {
           content="Find a lot of great events that allow you to evolve..."
         />
       </Head>
+      <NewsLetterRegistration />
       <EventList items={featuredEvents} />
     </div>
   );
