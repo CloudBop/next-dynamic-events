@@ -1,8 +1,8 @@
-import { getFeaturedEvents } from "../dummy-data";
+import { getFeaturedEvents } from "../helpers/firebase-api";
 import EventList from "../components/events/event-list";
 
-function HomePage() {
-  const featuredEvents = getFeaturedEvents();
+function HomePage(props) {
+  const { featuredEvents } = props;
 
   return (
     <div>
@@ -11,15 +11,14 @@ function HomePage() {
   );
 }
 
-// export async function getStaticProps() {
+export async function getStaticProps() {
+  const featuredEvents = await getFeaturedEvents();
 
-//   const data
-
-//   return {
-//     props: {
-//       featuredEvents: data
-//     }
-//   }
-// }
+  return {
+    props: {
+      featuredEvents: featuredEvents
+    }
+  };
+}
 
 export default HomePage;
