@@ -16,7 +16,9 @@ export async function getStaticProps() {
 
   return {
     props: {
-      featuredEvents: featuredEvents
+      featuredEvents: featuredEvents,
+      // in production regen every hour
+      revalidate: 60 * 60
     }
   };
 }
