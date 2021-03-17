@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-function handler(req, res) {
+async function handler(req, res) {
   //
   if (req.method === "POST") {
     const userEmail = req.body.email;
@@ -13,15 +13,17 @@ function handler(req, res) {
 
     console.log(userEmail);
 
-    MongoClient.connect(
+    const client = await MongoClient.connect(
       `mongodb+srv://${process.env.mongouser}:${process.env.mongopw}@cluster0.61wo8.mongodb.net/nextjs-events-newsletter?retryWrites=true&w=majority`
-    ).then(client => {
-      const db = client.db;
+    );
+    // open db connection
+    const db = client.db();
+    // insert document into collection
+    await db.collection("emails").insertOne({ email: userEmail });
+    //
+    client.close();
 
-      // insert document into collection
-      return db.collection("emails").insertOne({ email: userEmail });
-    });
-    res.status(201).json({ message: "email verified" });
+    res.status(201).json({ message: "Signed up!" });
   }
 }
 
