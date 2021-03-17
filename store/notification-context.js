@@ -19,8 +19,9 @@ export function NotificationContextProvider(props) {
 
   useEffect(() => {
     if (
-      (activeNotification && activeNotification.status === "error") ||
-      activeNotification.status === "success"
+      activeNotification &&
+      (activeNotification.status === "error" ||
+        activeNotification.status === "success")
     ) {
       const timer = setTimeout(() => {
         hideNotificationHandler();
