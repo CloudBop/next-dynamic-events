@@ -1,21 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import CommentList from "./comment-list";
 import NewComment from "./new-comment";
 import classes from "./comments.module.css";
+import NotificationContext from "../../store/notification-context";
 
 function Comments(props) {
   const { eventId } = props;
-
+  const notificationCtx = useContext(NotificationContext);
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState(null);
+  const [isFetchingComments, setIsFetchingComments] = useState(false);
 
   useEffect(() => {
     if (showComments) {
+      setIsFetchingComments(true);
       fetch(`/api/comments/${eventId}`)
+        // TODO - needs error handling
         .then(res => res.json())
         .then(d => {
           setComments(d.comments);
+          setIsFetchingComments(false);
         });
     }
     // return () => {
@@ -28,6 +33,11 @@ function Comments(props) {
   }
 
   function addCommentHandler(commentData) {
+    notificationCtx.showNotification({
+      title: "Sending Comment!",
+      message: `${commentData.name} - sending comment`,
+      status: "pending"
+    });
     // send data to API
     fetch(`/api/comments/${eventId}`, {
       method: "POST",
@@ -36,8 +46,30 @@ function Comments(props) {
         "Content-Type": "application/json"
       }
     })
-      .then(res => res.json())
-      .then(data => console.log(`data`, data));
+      .then(res => {
+        // remember, failed response from the server won't register in te catch block below
+        if (res.ok) {
+          return res.json();
+        }
+        // force it to throw error - this will trigger catch() below
+        return res.json().then(data => {
+          throw new Error(data.message || "something went wrong");
+        });
+      })
+      .then(data => {
+        notificationCtx.showNotification({
+          title: "Comment published!",
+          message: `${commentData.name} your comment was successful`,
+          status: "success"
+        });
+      })
+      .catch(err => {
+        notificationCtx.showNotification({
+          title: "Failed!",
+          message: err.message || `Failed to publish comment`,
+          status: "error"
+        });
+      });
   }
 
   return (
@@ -46,7 +78,8 @@ function Comments(props) {
         {showComments ? "Hide" : "Show"} Comments
       </button>
       {showComments && <NewComment onAddComment={addCommentHandler} />}
-      {showComments && <CommentList items={comments} />}
+      {showComments && !isFetchingComments && <CommentList items={comments} />}
+      {showComments && isFetchingComments && <p>Loading comments....</p>}
     </section>
   );
 }
