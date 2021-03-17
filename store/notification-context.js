@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const NotificationContext = createContext({
   notification: null, // {title, message,status}
@@ -16,6 +16,21 @@ export function NotificationContextProvider(props) {
   function hideNotificationHandler() {
     setActiveNotification(null);
   }
+
+  useEffect(() => {
+    if (
+      (activeNotification && activeNotification.status === "error") ||
+      activeNotification.status === "success"
+    ) {
+      const timer = setTimeout(() => {
+        hideNotificationHandler();
+      }, 3000);
+      // stop multiple timers from running if component remounted
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [activeNotification]);
 
   const context = {
     notification: activeNotification,
