@@ -1,18 +1,4 @@
-import { MongoClient } from "mongodb";
-
-async function connectDatabse() {
-  const client = await MongoClient.connect(
-    `mongodb+srv://${process.env.mongouser}:${process.env.mongopw}@cluster0.61wo8.mongodb.net/nextjs-events-newsletter?retryWrites=true&w=majority`
-  );
-  return client;
-}
-
-async function insertDocument(client, document) {
-  // open db connection
-  const db = client.db();
-  // insert document into collection
-  await db.collection("emails").insertOne(document);
-}
+import { insertDocument, connectDatabase } from "../../../helpers/db-utility";
 
 async function handler(req, res) {
   //
@@ -26,7 +12,7 @@ async function handler(req, res) {
     }
     let client;
     try {
-      client = await connectDatabse();
+      client = await connectDatabase();
     } catch (error) {
       console.log(`connectDatabase()-failed`);
       console.log(error);
@@ -35,7 +21,7 @@ async function handler(req, res) {
     }
 
     try {
-      await insertDocument(client, { email: userEmail });
+      await insertDocument(client, "newsletter-emails", { email: userEmail });
       client.close();
     } catch (error) {
       console.log(`insertDocument()-failed`);
