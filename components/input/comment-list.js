@@ -1,6 +1,6 @@
-import classes from './comment-list.module.css';
+import classes from "./comment-list.module.css";
 
-function CommentList() {
+function CommentList({ items }) {
   return (
     <ul className={classes.comments}>
       {/* Render list of comments - fetched from API */}
@@ -16,6 +16,15 @@ function CommentList() {
           By <address>Maximilian</address>
         </div>
       </li>
+      {items &&
+        items.map(item => (
+          <li key={item.id}>
+            <p>{item.text}</p>
+            <div>
+              By <address>{item.name}</address>
+            </div>
+          </li>
+        ))}
     </ul>
   );
 }
